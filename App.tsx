@@ -386,9 +386,9 @@ const App: React.FC = () => {
               {columns.map(col => col.tasks.length > 0 && (
                 <div key={col.id} className="space-y-4">
                   <h3 className={`text-[12px] font-black uppercase tracking-[0.2em] px-4 ${col.color}`}>{col.label}</h3>
-                  <div className="bg-white rounded-[40px] border border-black/5 shadow-xl divide-y divide-black/5 overflow-hidden">
+                  <div className="bg-white rounded-[32px] border border-black/5 shadow-xl divide-y divide-black/5 overflow-hidden">
                     {col.tasks.map(t => (
-                      <div key={t.id} className={`p-6 flex items-center justify-between gap-4 md:gap-6 transition-all group hover:bg-slate-50`}>
+                      <div key={t.id} className={`p-4 flex items-center justify-between gap-3 md:gap-4 transition-all group hover:bg-slate-50`}>
                         <div className="flex items-center gap-4 md:gap-6 flex-1">
                           <button
                             title="Concluir"
@@ -453,44 +453,44 @@ const App: React.FC = () => {
       {/* MODAL NOVA TAREFA */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-xl p-0 sm:p-4">
-          <form onSubmit={handleCreateOrUpdate} className="bg-white w-full max-w-xl rounded-t-[50px] sm:rounded-[50px] p-10 shadow-[0_50px_100px_rgba(0,0,0,0.3)] space-y-8 max-h-[95dvh] overflow-y-auto scrollbar-hide">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-3xl font-black uppercase tracking-tighter">Planejar Tarefa</h3>
-              <button title="Fechar" type="button" onClick={() => setIsModalOpen(false)} className="text-slate-200 hover:text-black p-3 transition-colors"><svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
+          <form onSubmit={handleCreateOrUpdate} className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 shadow-[0_50px_100px_rgba(0,0,0,0.3)] space-y-6 max-h-[95dvh] overflow-y-auto scrollbar-hide">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-2xl font-black uppercase tracking-tighter">Planejar Tarefa</h3>
+              <button title="Fechar" type="button" onClick={() => setIsModalOpen(false)} className="text-slate-200 hover:text-black p-2 transition-colors"><svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Título</label>
-                <input name="title" required defaultValue={editingTask?.title} className="w-full bg-slate-50 border border-slate-100 p-6 rounded-3xl font-black text-xl outline-none focus:ring-4 focus:ring-zentask-secondary/20 transition-all" placeholder="O que faremos?" />
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Título</label>
+                <input name="title" required defaultValue={editingTask?.title} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black text-lg outline-none focus:ring-4 focus:ring-zentask-secondary/20 transition-all" placeholder="O que faremos?" />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Descrição</label>
-                <textarea name="description" defaultValue={editingTask?.description} className="w-full bg-slate-50 border border-slate-100 p-6 rounded-3xl font-bold outline-none text-base h-32 scrollbar-hide" placeholder="Detalhes..." />
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Descrição</label>
+                <textarea name="description" defaultValue={editingTask?.description} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold outline-none text-sm h-24 scrollbar-hide" placeholder="Detalhes..." />
               </div>
-              <div className="grid grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Prazo</label>
-                  <input name="dueDate" type="date" defaultValue={editingTask?.dueDate} className="w-full bg-slate-50 border border-slate-100 p-6 rounded-3xl font-black text-xs" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Prazo</label>
+                  <input name="dueDate" type="date" defaultValue={editingTask?.dueDate} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black text-xs" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Recorrência</label>
-                  <select name="recurrence" defaultValue={editingTask?.recurrence || 'NONE'} className="w-full bg-slate-50 border border-slate-100 p-6 rounded-3xl font-black text-xs uppercase tracking-widest">
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Recorrência</label>
+                  <select name="recurrence" defaultValue={editingTask?.recurrence || 'NONE'} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black text-xs uppercase tracking-widest">
                     <option value="NONE">Única Vez</option>
                     <option value="DAILY">Diário</option><option value="WEEKLY">Semanal</option><option value="MONTHLY">Mensal</option><option value="YEARLY">Anual</option>
                   </select>
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Categoria</label>
-                <input name="category" list="cat-list" defaultValue={editingTask?.category} className="w-full bg-slate-50 border border-slate-100 p-6 rounded-3xl font-black outline-none tracking-widest uppercase text-xs" placeholder="EX: TRABALHO..." />
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Categoria</label>
+                <input name="category" list="cat-list" defaultValue={editingTask?.category} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black outline-none tracking-widest uppercase text-xs" placeholder="EX: TRABALHO..." />
                 <datalist id="cat-list">{availableCategories.map(c => <option key={c} value={c} />)}</datalist>
               </div>
 
               {/* CHECKLIST / SUBTASKS UI */}
-              <div className="space-y-3 pt-4 border-t border-slate-100">
+              <div className="space-y-2 pt-3 border-t border-slate-100">
                 <div className="flex justify-between items-end">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Checklist</label>
-                  <span className="text-[10px] font-bold text-slate-300">{currentSubtasks.filter(s => s.completed).length}/{currentSubtasks.length}</span>
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Checklist</label>
+                  <span className="text-[9px] font-bold text-slate-300">{currentSubtasks.filter(s => s.completed).length}/{currentSubtasks.length}</span>
                 </div>
 
                 <div className="flex gap-2">
@@ -499,29 +499,29 @@ const App: React.FC = () => {
                     onChange={(e) => setSubtaskInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSubtask())}
                     placeholder="Adicionar item..."
-                    className="flex-1 bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold text-sm outline-none focus:border-zentask-secondary transition-all"
+                    className="flex-1 bg-slate-50 border border-slate-100 p-3 rounded-xl font-bold text-xs outline-none focus:border-zentask-secondary transition-all"
                   />
-                  <button type="button" onClick={addSubtask} className="bg-black text-white w-14 rounded-2xl flex items-center justify-center hover:bg-zentask-secondary hover:text-black transition-colors">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
+                  <button type="button" onClick={addSubtask} className="bg-black text-white w-10 rounded-xl flex items-center justify-center hover:bg-zentask-secondary hover:text-black transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
                   </button>
                 </div>
 
-                <div className="space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-hide">
+                <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1 scrollbar-hide">
                   {currentSubtasks.map(sub => (
-                    <div key={sub.id} className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-transparent hover:border-slate-200 group">
-                      <button type="button" onClick={() => toggleSubtask(sub.id)} className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${sub.completed ? 'bg-zentask-secondary border-black' : 'border-slate-300 hover:border-black'}`}>
-                        {sub.completed && <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>}
+                    <div key={sub.id} className="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-transparent hover:border-slate-200 group">
+                      <button type="button" onClick={() => toggleSubtask(sub.id)} className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${sub.completed ? 'bg-zentask-secondary border-black' : 'border-slate-300 hover:border-black'}`}>
+                        {sub.completed && <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>}
                       </button>
-                      <span className={`flex-1 text-sm font-bold ${sub.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>{sub.title}</span>
-                      <button type="button" onClick={() => removeSubtask(sub.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      <span className={`flex-1 text-xs font-bold ${sub.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>{sub.title}</span>
+                      <button type="button" onClick={() => removeSubtask(sub.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-0.5">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                       </button>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-            <button title="Salvar" type="submit" className="w-full bg-black text-white py-8 rounded-[32px] font-black uppercase tracking-[0.4em] shadow-2xl hover:bg-zentask-primary hover:scale-[1.02] transition-all active:scale-95">SALVAR TAREFA</button>
+            <button title="Salvar" type="submit" className="w-full bg-black text-white py-6 rounded-[24px] font-black uppercase tracking-[0.4em] shadow-xl hover:bg-zentask-primary hover:scale-[1.01] transition-all active:scale-95 text-sm">SALVAR</button>
           </form>
         </div>
       )}
