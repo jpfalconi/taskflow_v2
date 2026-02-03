@@ -1,0 +1,7 @@
+{
+  "name": "TaskFlow",
+  "description": "A sophisticated task management system powered by Gemini AI, featuring smart task breakdown, daily productivity briefings, and an intuitive Kanban interface.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

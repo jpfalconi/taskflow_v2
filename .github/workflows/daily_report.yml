@@ -1,0 +1,32 @@
+
+name: Daily Task Report
+
+on:
+  schedule:
+    # Roda todos os dias às 09:00 UTC (06:00 AM horário de Brasília)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Permite que você clique num botão no GitHub para testar na hora
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (Baixa o código)
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências (Supabase e Mailer)
+        run: npm install @supabase/supabase-js nodemailer
+
+      - name: Executar Script
+        run: node scripts/daily_report.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
