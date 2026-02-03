@@ -1,15 +1,15 @@
-
-name: Daily Task Report
+name: Daily TaskFlow Report
 
 on:
   schedule:
-    # Roda todos os dias às 09:00 UTC (06:00 AM horário de Brasília)
-    - cron: '0 9 * * *'
-  workflow_dispatch: # Permite que você clique num botão no GitHub para testar na hora
+    # 8:00 AM Brazil Time = 11:00 UTC
+    - cron: '0 11 * * *'
+  workflow_dispatch: # Permite rodar manualmente
 
 jobs:
   send-report:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout (Baixa o código)
         uses: actions/checkout@v4
@@ -23,10 +23,9 @@ jobs:
         run: npm install @supabase/supabase-js nodemailer
 
       - name: Executar Script
-        run: node scripts/daily_report.mjs
+        run: node scripts/send_report.js
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
