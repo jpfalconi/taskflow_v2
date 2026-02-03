@@ -25,9 +25,6 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 if (!EMAIL_USER || !EMAIL_PASS) {
   console.error("⚠️ AVISO: Configuração de email ausente. Apenas gerando HTML para log.");
-} else {
-  console.log(`Debug: Usuário tem ${EMAIL_USER.length} caracteres.`);
-  console.log(`Debug: Senha/Token tem ${EMAIL_PASS.length} caracteres.`);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -149,7 +146,7 @@ async function main() {
     const transporter = nodemailer.createTransport({
       host: 'smtp.protonmail.ch',
       port: 587,
-      secure: false, // false para usar STARTTLS na porta 587
+      secure: false,
       auth: {
         user: EMAIL_USER,
         pass: EMAIL_PASS
@@ -159,10 +156,111 @@ async function main() {
     });
 
     await transporter.sendMail({
-      from: `"TaskFlow AI" <${EMAIL_USER}>`,
+      from: `"TaskFlow Assistant" <${EMAIL_USER}>`,
       to: EMAIL_TO,
-      subject: `📊 Relatório Diário: ${overdueTasks.length} Atrasadas | ${todayTasks.length} Hoje`,
-      html: html
+      subject: `📊 Relatório: ${overdueTasks.length} Atrasadas | ${todayTasks.length} Hoje`,
+      html: `
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 0; color: #18181b; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .header { background-color: #18181b; padding: 40px 30px; text-align: center; border-bottom: 4px solid ${COLORS.secondary}; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 800; color: ${COLORS.secondary}; text-transform: uppercase; letter-spacing: -0.025em; font-style: italic; }
+        .header p { margin: 8px 0 0; color: #a1a1aa; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+        .content { padding: 40px 30px; }
+        .summary-box { background-color: #f4f4f5; padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
+        .summary-text { font-size: 15px; color: #52525b; margin: 0; font-weight: 500; }
+        .summary-highlight { color: #18181b; font-weight: 800; font-size: 18px; }
+        
+        .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; display: flex; align-items: center; color: #71717a; }
+        .section-title span { margin-right: 8px; font-size: 16px; }
+        .section-title.red { color: ${COLORS.red}; }
+        .section-title.gold { color: #854d0e; }
+        
+        .task-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; transition: all 0.2s; position: relative; overflow: hidden; }
+        .task-card.overdue { border-left: 4px solid ${COLORS.red}; background-color: #fef2f2; border-color: #fee2e2; }
+        .task-card.today { border-left: 4px solid ${COLORS.secondary}; background-color: #f7fee7; border-color: #d9f99d; }
+        .task-card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; color: #27272a; line-height: 1.4; }
+        .task-card .meta { font-size: 12px; color: #71717a; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .task-card .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background-color: rgba(0,0,0,0.05); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; }
+        
+        .footer { text-align: center; padding: 30px; background-color: #f4f4f5; color: #a1a1aa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; border-top: 1px solid #e4e4e7; }
+        
+        @media only screen and (max-width: 600px) {
+            .container { margin: 0; border-radius: 0; }
+            .content { padding: 30px 20px; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>TaskFlow</h1>
+          <p>Relatório de Planejamento Diário</p>
+        </div>
+        
+        <div class="content">
+          <div class="summary-box">
+             <p class="summary-text">Olá, João! Hoje você tem <span class="summary-highlight">${tasks.length} missões</span> ativas no radar.</p>
+          </div>
+
+          ${overdueTasks.length > 0 ? `
+            <div class="section-title red"><span>🔥</span> Atrasadas — Prioridade Máxima</div>
+            ${overdueTasks.map(t => `
+              <div class="task-card overdue">
+                <h3>${t.title}</h3>
+                <div class="meta">
+                   <span class="badge" style="color: ${COLORS.red}">Atrasada</span>
+                   <span>•</span>
+                   <span>${t.category || 'Geral'}</span>
+                   <span>•</span>
+                   <span>Prazo: ${formatDate(t.dueDate)}</span>
+                </div>
+              </div>
+            `).join('')}
+            <br/>
+          ` : ''}
+
+          ${todayTasks.length > 0 ? `
+            <div class="section-title gold"><span>⭐</span> Missões de Hoje</div>
+            ${todayTasks.map(t => `
+              <div class="task-card today">
+                <h3>${t.title}</h3>
+                <div class="meta">
+                   <span class="badge" style="color: #4d7c0f">Entregar Hoje</span>
+                   <span>•</span>
+                   <span>${t.category || 'Geral'}</span>
+                </div>
+              </div>
+            `).join('')}
+            <br/>
+          ` : ''}
+
+          ${upcomingTasks.slice(0, 5).length > 0 ? `
+            <div class="section-title"><span>📅</span> Próximas no Radar</div>
+            ${upcomingTasks.slice(0, 5).map(t => `
+              <div class="task-card">
+                <h3>${t.title}</h3>
+                <div class="meta">
+                   <span>${t.category || 'Geral'}</span>
+                   <span>•</span>
+                   <span>${formatDate(t.dueDate)}</span>
+                </div>
+              </div>
+            `).join('')}
+          ` : ''}
+          
+        </div>
+        <div class="footer">
+          Gerado automaticamente pelo TaskFlow AI • Falcons
+        </div>
+      </div>
+    </body>
+    </html>
+`
     });
 
     console.log("✅ Email enviado com sucesso!");
