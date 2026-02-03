@@ -8,17 +8,29 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
 const EMAIL_USER = process.env.EMAIL_USER; // Seu email (gmail, outlook)
 const EMAIL_PASS = process.env.EMAIL_PASS; // App Password do email
-const EMAIL_TO = 'jp@jphub.com.br';        // Para quem enviar
+// ...
+const EMAIL_TO = 'jp@jphub.com.br, joaohomem@falconi.com';        // Para quem enviar
 
-// Cores da marca
-const COLORS = {
-  primary: '#7A7423',
-  secondary: '#A7E82B',
-  bg: '#EAEBE9',
-  red: '#D64550',
-};
+// ... (código do html omitido, mantendo igual) ...
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+await transporter.sendMail({
+  from: {
+    name: 'TaskFlow Assistant',
+    address: EMAIL_USER
+  },
+  to: EMAIL_TO,
+  subject: `📊 Relatório: ${overdueTasks.length} Atrasadas | ${todayTasks.length} Hoje`,
+  // ...
+
+  // Cores da marca
+  const COLORS = {
+    primary: '#7A7423',
+    secondary: '#A7E82B',
+    bg: '#EAEBE9',
+    red: '#D64550',
+  };
+
+  if(!SUPABASE_URL || !SUPABASE_KEY) {
   console.error("❌ ERRO: Supabase URL ou Key não encontradas.");
   process.exit(1);
 }
@@ -156,7 +168,10 @@ async function main() {
     });
 
     await transporter.sendMail({
-      from: `"TaskFlow Assistant" <${EMAIL_USER}>`,
+      from: {
+        name: 'TaskFlow Assistant',
+        address: EMAIL_USER
+      },
       to: EMAIL_TO,
       subject: `📊 Relatório: ${overdueTasks.length} Atrasadas | ${todayTasks.length} Hoje`,
       html: `
