@@ -388,33 +388,33 @@ const App: React.FC = () => {
                   <h3 className={`text-[12px] font-black uppercase tracking-[0.2em] px-4 ${col.color}`}>{col.label}</h3>
                   <div className="bg-white rounded-[32px] border border-black/5 shadow-xl divide-y divide-black/5 overflow-hidden">
                     {col.tasks.map(t => (
-                      <div key={t.id} className={`p-4 flex items-center justify-between gap-3 md:gap-4 transition-all group hover:bg-slate-50`}>
-                        <div className="flex items-center gap-4 md:gap-6 flex-1">
+                      <div key={t.id} className={`py-2 px-4 flex items-center justify-between gap-3 transition-all group hover:bg-slate-50`}>
+                        <div className="flex items-center gap-3 flex-1">
                           <button
                             title="Concluir"
                             onClick={() => handleStatusChange(t.id, t.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE)}
-                            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${t.status === TaskStatus.DONE ? 'bg-zentask-secondary border-black' : 'border-slate-200 hover:border-zentask-secondary'}`}
+                            className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center transition-all shrink-0 ${t.status === TaskStatus.DONE ? 'bg-zentask-secondary border-black' : 'border-slate-300 hover:border-zentask-secondary'}`}
                           >
-                            {t.status === TaskStatus.DONE && <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg>}
+                            {t.status === TaskStatus.DONE && <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg>}
                           </button>
 
                           <div title="Editar" className="flex flex-col cursor-pointer flex-1" onClick={() => openModal(t)}>
-                            <span className={`font-black text-sm md:text-base ${t.status === TaskStatus.DONE ? 'line-through opacity-60 text-slate-500' : 'text-black'}`}>{t.title}</span>
-                            <span className="text-[9px] md:text-[10px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{t.category || 'Geral'}</span>
+                            <span className={`font-bold text-xs md:text-sm ${t.status === TaskStatus.DONE ? 'line-through opacity-60 text-slate-500' : 'text-black'}`}>{t.title}</span>
+                            <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-widest">{t.category || 'Geral'}</span>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 md:gap-6">
-                          <span className={`text-[9px] md:text-[11px] font-black uppercase tracking-widest ${isLate(t.dueDate) ? 'text-zentask-red' : 'text-zentask-primary'} hidden sm:inline`}>
+                        <div className="flex items-center gap-3">
+                          <span className={`text-[9px] font-bold uppercase tracking-widest ${isLate(t.dueDate) ? 'text-zentask-red' : 'text-slate-400'} hidden sm:inline`}>
                             {t.dueDate ? new Date(t.dueDate).toLocaleDateString('pt-BR') : 'SEM PRAZO'}
                           </span>
 
                           <div
                             title="Selecionar"
                             onClick={() => toggleSelect(t.id)}
-                            className={`w-10 h-10 rounded-xl border-2 cursor-pointer flex items-center justify-center transition-all ${selectedIds.has(t.id) ? 'bg-black border-black scale-110 shadow-lg' : 'border-slate-100 bg-white hover:border-black'}`}
+                            className={`w-8 h-8 rounded-lg border-[1.5px] cursor-pointer flex items-center justify-center transition-all ${selectedIds.has(t.id) ? 'bg-black border-black scale-105 shadow-md' : 'border-slate-200 bg-white hover:border-black'}`}
                           >
-                            {selectedIds.has(t.id) && <svg className="w-5 h-5 text-zentask-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg>}
+                            {selectedIds.has(t.id) && <svg className="w-4 h-4 text-zentask-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg>}
                           </div>
                         </div>
                       </div>
@@ -461,20 +461,20 @@ const App: React.FC = () => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Título</label>
-                <input name="title" required defaultValue={editingTask?.title} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black text-lg outline-none focus:ring-4 focus:ring-zentask-secondary/20 transition-all" placeholder="O que faremos?" />
+                <input name="title" required defaultValue={editingTask?.title} className="w-full bg-slate-50 border border-slate-100 p-3 rounded-2xl font-black text-base outline-none focus:ring-4 focus:ring-zentask-secondary/20 transition-all" placeholder="O que faremos?" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Descrição</label>
-                <textarea name="description" defaultValue={editingTask?.description} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold outline-none text-sm h-24 scrollbar-hide" placeholder="Detalhes..." />
+                <textarea name="description" defaultValue={editingTask?.description} className="w-full bg-slate-50 border border-slate-100 p-3 rounded-2xl font-bold outline-none text-xs h-20 scrollbar-hide" placeholder="Detalhes..." />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Prazo</label>
-                  <input name="dueDate" type="date" defaultValue={editingTask?.dueDate} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black text-xs" />
+                  <input name="dueDate" type="date" defaultValue={editingTask?.dueDate} className="w-full bg-slate-50 border border-slate-100 p-3 rounded-2xl font-black text-xs" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Recorrência</label>
-                  <select name="recurrence" defaultValue={editingTask?.recurrence || 'NONE'} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black text-xs uppercase tracking-widest">
+                  <select name="recurrence" defaultValue={editingTask?.recurrence || 'NONE'} className="w-full bg-slate-50 border border-slate-100 p-3 rounded-2xl font-black text-xs uppercase tracking-widest">
                     <option value="NONE">Única Vez</option>
                     <option value="DAILY">Diário</option><option value="WEEKLY">Semanal</option><option value="MONTHLY">Mensal</option><option value="YEARLY">Anual</option>
                   </select>
@@ -482,7 +482,7 @@ const App: React.FC = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Categoria</label>
-                <input name="category" list="cat-list" defaultValue={editingTask?.category} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-black outline-none tracking-widest uppercase text-xs" placeholder="EX: TRABALHO..." />
+                <input name="category" list="cat-list" defaultValue={editingTask?.category} className="w-full bg-slate-50 border border-slate-100 p-3 rounded-2xl font-black outline-none tracking-widest uppercase text-xs" placeholder="EX: TRABALHO..." />
                 <datalist id="cat-list">{availableCategories.map(c => <option key={c} value={c} />)}</datalist>
               </div>
 
