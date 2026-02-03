@@ -151,9 +151,8 @@ async function main() {
         user: EMAIL_USER,
         pass: EMAIL_PASS
       },
-      tls: {
-        ciphers: 'SSLv3'
-      }
+      logger: true,
+      debug: true
     });
 
     await transporter.sendMail({
