@@ -25,6 +25,9 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 if (!EMAIL_USER || !EMAIL_PASS) {
   console.error("⚠️ AVISO: Configuração de email ausente. Apenas gerando HTML para log.");
+} else {
+  console.log(`Debug: Usuário tem ${EMAIL_USER.length} caracteres.`);
+  console.log(`Debug: Senha/Token tem ${EMAIL_PASS.length} caracteres.`);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
