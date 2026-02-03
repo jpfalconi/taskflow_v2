@@ -76,15 +76,6 @@ const App: React.FC = () => {
     }
   };
 
-  const handleWhatsAppSync = () => {
-    const link = db.getSyncLink();
-    if (!link) {
-      alert("Configure o Supabase primeiro nas Métricas!");
-      return;
-    }
-    const text = encodeURIComponent(`🚀 *TaskFlow Sync* \n\nAcesse suas tarefas aqui:\n${link}`);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
-  };
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
@@ -285,11 +276,7 @@ const App: React.FC = () => {
           <button title="Visão de Lista Detalhada" onClick={() => navigateTo('LISTA')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${view === 'LISTA' ? 'bg-zentask-primary text-white shadow-lg' : 'text-white/60 hover:text-white'}`}><span className="font-bold text-xs uppercase tracking-widest">Lista</span></button>
           <button title="Métricas e Configurações" onClick={() => navigateTo('DASHBOARD')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${view === 'DASHBOARD' ? 'bg-zentask-primary text-white shadow-lg' : 'text-white/60 hover:text-white'}`}><span className="font-bold text-xs uppercase tracking-widest">Métricas</span></button>
         </nav>
-        <div className="p-6 bg-white/5 mx-5 mb-8 rounded-[32px] border border-white/5">
-          <button title="Sincronizar com WhatsApp" onClick={handleWhatsAppSync} className="w-full py-4 bg-zentask-secondary text-black rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-lg">
-            📲 Sync WhatsApp
-          </button>
-        </div>
+
       </aside>
 
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
