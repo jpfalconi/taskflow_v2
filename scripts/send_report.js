@@ -208,6 +208,11 @@ async function main() {
             .container { margin: 0; border-radius: 0; }
             .content { padding: 30px 20px; }
         }
+        
+        .btn-container { text-align: center; margin-top: 35px; }
+        .btn { display: inline-block; background-color: ${COLORS.primary}; color: #ffffff; padding: 14px 28px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(122, 116, 35, 0.3); }
+        .btn:hover { background-color: #5e591b; transform: translateY(-1px); box-shadow: 0 6px 8px -1px rgba(122, 116, 35, 0.4); }
+
       </style>
     </head>
     <body>
@@ -267,6 +272,10 @@ async function main() {
               </div>
             `).join('')}
           ` : ''}
+          
+          <div class="btn-container">
+            <a href="https://taskflow-v2-gilt.vercel.app" class="btn">Acessar Sistema</a>
+          </div>
           
         </div>
         <div class="footer">
