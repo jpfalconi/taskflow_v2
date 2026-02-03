@@ -38,7 +38,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, view, isSelected, onSelect, o
         </div>
       </div>
 
-      <h3 className={`font-black text-[15px] text-black mb-1 leading-tight tracking-tight ${task.status === TaskStatus.DONE ? 'line-through opacity-30' : ''}`}>
+      <h3 className={`font-black text-[15px] text-black mb-1 leading-tight tracking-tight ${task.status === TaskStatus.DONE ? 'line-through opacity-60 text-slate-600' : ''}`}>
         {task.title}
       </h3>
 

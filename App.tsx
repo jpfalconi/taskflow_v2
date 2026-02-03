@@ -399,7 +399,7 @@ const App: React.FC = () => {
                           </button>
 
                           <div title="Editar" className="flex flex-col cursor-pointer flex-1" onClick={() => openModal(t)}>
-                            <span className={`font-black text-sm md:text-base ${t.status === TaskStatus.DONE ? 'line-through opacity-30 text-slate-400' : 'text-black'}`}>{t.title}</span>
+                            <span className={`font-black text-sm md:text-base ${t.status === TaskStatus.DONE ? 'line-through opacity-60 text-slate-500' : 'text-black'}`}>{t.title}</span>
                             <span className="text-[9px] md:text-[10px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{t.category || 'Geral'}</span>
                           </div>
                         </div>
