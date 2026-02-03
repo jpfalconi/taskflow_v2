@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Task, TaskStatus, ViewType, RecurrenceType } from './types';
+import { Task, TaskStatus, ViewType, RecurrenceType, Subtask } from './types';
 import TaskCard from './components/TaskCard';
 import AiAssistant from './components/AiAssistant';
 import Dashboard from './components/Dashboard';
@@ -47,6 +47,10 @@ const App: React.FC = () => {
   const [isAuthorized, setIsAuthorized] = useState(() => localStorage.getItem('taskflow_auth') === 'true');
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
+
+  // Subtasks State
+  const [subtaskInput, setSubtaskInput] = useState('');
+  const [currentSubtasks, setCurrentSubtasks] = useState<Subtask[]>([]);
 
   const loadData = async (cat?: string) => {
     setIsLoading(true);
@@ -135,29 +139,62 @@ const App: React.FC = () => {
   const handleCreateOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as any;
-    const task: Task = editingTask ? {
-      ...editingTask,
+
+    // Base object
+    const baseTask: Partial<Task> = {
       title: form.title.value,
       description: form.description.value,
       category: form.category.value || 'Geral',
-      dueDate: form.dueDate.value,
-      recurrence: form.recurrence.value
-    } : {
-      id: Math.random().toString(36).substr(2, 9),
-      title: form.title.value,
-      description: form.description.value,
-      category: form.category.value || 'Geral',
-      status: TaskStatus.TODO,
       dueDate: form.dueDate.value,
       recurrence: form.recurrence.value,
-      createdAt: new Date().toISOString(),
-      tags: [],
-      subtasks: []
+      subtasks: currentSubtasks // Include subtasks
     };
-    setTasks(prev => editingTask ? prev.map(t => t.id === editingTask.id ? task : t) : [task, ...prev]);
-    await db.saveTask(task);
+
+    let finalTask: Task;
+
+    if (editingTask) {
+      finalTask = { ...editingTask, ...baseTask } as Task;
+    } else {
+      finalTask = {
+        id: Math.random().toString(36).substr(2, 9),
+        status: TaskStatus.TODO,
+        createdAt: new Date().toISOString(),
+        tags: [],
+        ...baseTask
+      } as Task;
+    }
+
+    setTasks(prev => editingTask ? prev.map(t => t.id === editingTask.id ? finalTask : t) : [finalTask, ...prev]);
+    await db.saveTask(finalTask);
+
     setIsModalOpen(false);
     setEditingTask(null);
+    setCurrentSubtasks([]); // Reset
+  };
+
+  const openModal = (task?: Task | null) => {
+    setEditingTask(task || null);
+    setCurrentSubtasks(task?.subtasks || []);
+    setIsModalOpen(true);
+  };
+
+  const addSubtask = () => {
+    if (!subtaskInput.trim()) return;
+    const newSub: Subtask = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: subtaskInput,
+      completed: false
+    };
+    setCurrentSubtasks([...currentSubtasks, newSub]);
+    setSubtaskInput('');
+  };
+
+  const toggleSubtask = (id: string) => {
+    setCurrentSubtasks(prev => prev.map(s => s.id === id ? { ...s, completed: !s.completed } : s));
+  };
+
+  const removeSubtask = (id: string) => {
+    setCurrentSubtasks(prev => prev.filter(s => s.id !== id));
   };
 
   const handleStatusChange = useCallback(async (id: string, newStatus: TaskStatus) => {
@@ -312,7 +349,7 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button title="Nova Tarefa" onClick={() => { setEditingTask(null); setIsModalOpen(true); }} className="bg-black text-white px-5 md:px-8 py-4 rounded-2xl font-black text-[9px] md:text-xs uppercase tracking-[0.2em] hover:bg-zentask-primary transition-all shadow-2xl shrink-0">NOVA TAREFA</button>
+            <button title="Nova Tarefa" onClick={() => openModal(null)} className="bg-black text-white px-5 md:px-8 py-4 rounded-2xl font-black text-[9px] md:text-xs uppercase tracking-[0.2em] hover:bg-zentask-primary transition-all shadow-2xl shrink-0">NOVA TAREFA</button>
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -339,7 +376,7 @@ const App: React.FC = () => {
                     onDrop={(e) => handleDrop(e, col.id)}
                     className={`flex-1 rounded-[32px] p-4 ${col.bg} border-2 border-dashed border-black/5 space-y-3 overflow-y-auto scrollbar-hide shadow-inner transition-colors duration-200`}
                   >
-                    {col.tasks.map(t => <TaskCard key={t.id} task={t} view={view} isSelected={selectedIds.has(t.id)} onSelect={toggleSelect} onEdit={(task) => { setEditingTask(task); setIsModalOpen(true); }} onDelete={async (id) => { if (confirm('Remover tarefa?')) { setTasks(p => p.filter(x => x.id !== id)); await db.deleteTask(id); } }} onStatusChange={handleStatusChange} onDragStart={(e, id) => e.dataTransfer.setData('taskId', id)} />)}
+                    {col.tasks.map(t => <TaskCard key={t.id} task={t} view={view} isSelected={selectedIds.has(t.id)} onSelect={toggleSelect} onEdit={openModal} onDelete={async (id) => { if (confirm('Remover tarefa?')) { setTasks(p => p.filter(x => x.id !== id)); await db.deleteTask(id); } }} onStatusChange={handleStatusChange} onDragStart={(e, id) => e.dataTransfer.setData('taskId', id)} />)}
                   </div>
                 </div>
               ))}
@@ -361,7 +398,7 @@ const App: React.FC = () => {
                             {t.status === TaskStatus.DONE && <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg>}
                           </button>
 
-                          <div title="Editar" className="flex flex-col cursor-pointer flex-1" onClick={() => { setEditingTask(t); setIsModalOpen(true); }}>
+                          <div title="Editar" className="flex flex-col cursor-pointer flex-1" onClick={() => openModal(t)}>
                             <span className={`font-black text-sm md:text-base ${t.status === TaskStatus.DONE ? 'line-through opacity-30 text-slate-400' : 'text-black'}`}>{t.title}</span>
                             <span className="text-[9px] md:text-[10px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{t.category || 'Geral'}</span>
                           </div>
@@ -447,6 +484,41 @@ const App: React.FC = () => {
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Categoria</label>
                 <input name="category" list="cat-list" defaultValue={editingTask?.category} className="w-full bg-slate-50 border border-slate-100 p-6 rounded-3xl font-black outline-none tracking-widest uppercase text-xs" placeholder="EX: TRABALHO..." />
                 <datalist id="cat-list">{availableCategories.map(c => <option key={c} value={c} />)}</datalist>
+              </div>
+
+              {/* CHECKLIST / SUBTASKS UI */}
+              <div className="space-y-3 pt-4 border-t border-slate-100">
+                <div className="flex justify-between items-end">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Checklist</label>
+                  <span className="text-[10px] font-bold text-slate-300">{currentSubtasks.filter(s => s.completed).length}/{currentSubtasks.length}</span>
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    value={subtaskInput}
+                    onChange={(e) => setSubtaskInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSubtask())}
+                    placeholder="Adicionar item..."
+                    className="flex-1 bg-slate-50 border border-slate-100 p-4 rounded-2xl font-bold text-sm outline-none focus:border-zentask-secondary transition-all"
+                  />
+                  <button type="button" onClick={addSubtask} className="bg-black text-white w-14 rounded-2xl flex items-center justify-center hover:bg-zentask-secondary hover:text-black transition-colors">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
+                  </button>
+                </div>
+
+                <div className="space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-hide">
+                  {currentSubtasks.map(sub => (
+                    <div key={sub.id} className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-transparent hover:border-slate-200 group">
+                      <button type="button" onClick={() => toggleSubtask(sub.id)} className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${sub.completed ? 'bg-zentask-secondary border-black' : 'border-slate-300 hover:border-black'}`}>
+                        {sub.completed && <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>}
+                      </button>
+                      <span className={`flex-1 text-sm font-bold ${sub.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>{sub.title}</span>
+                      <button type="button" onClick={() => removeSubtask(sub.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             <button title="Salvar" type="submit" className="w-full bg-black text-white py-8 rounded-[32px] font-black uppercase tracking-[0.4em] shadow-2xl hover:bg-zentask-primary hover:scale-[1.02] transition-all active:scale-95">SALVAR TAREFA</button>
