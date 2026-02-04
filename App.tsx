@@ -4,7 +4,6 @@ import { Task, TaskStatus, ViewType, RecurrenceType, Subtask } from './types';
 import TaskCard from './components/TaskCard';
 import AiAssistant from './components/AiAssistant';
 import Dashboard from './components/Dashboard';
-import FocusMode from './components/FocusMode';
 import { db } from './services/database';
 
 const DEFAULT_CATEGORIES = ['Pessoal', 'Trabalho', 'Saúde', 'Financeiro'];
@@ -45,8 +44,7 @@ const App: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set<string>());
   const [sortMode, setSortMode] = useState<'DATE' | 'TITLE'>('DATE');
 
-  // Focus Mode State
-  const [focusTask, setFocusTask] = useState<Task | null>(null);
+
 
   const [isAuthorized, setIsAuthorized] = useState(() => localStorage.getItem('taskflow_auth') === 'true');
   const [pinInput, setPinInput] = useState('');
@@ -406,14 +404,6 @@ const App: React.FC = () => {
                             <span className={`font-bold text-xs md:text-sm ${t.status === TaskStatus.DONE ? 'line-through opacity-60 text-slate-500' : 'text-black'}`}>{t.title}</span>
                             <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-widest">{t.category || 'Geral'}</span>
                           </div>
-
-                          <button
-                            title="Modo Foco"
-                            onClick={() => setFocusTask(t)}
-                            className="w-6 h-6 rounded-full border-[1.5px] border-slate-300 flex items-center justify-center hover:bg-black hover:border-black hover:text-white transition-all text-slate-400"
-                          >
-                            <svg className="w-2.5 h-2.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                          </button>
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -539,18 +529,6 @@ const App: React.FC = () => {
       )}
 
       <AiAssistant tasks={tasks} onTaskCreated={(t) => { setTasks(p => [t, ...p]); db.saveTask(t); }} />
-
-      {/* MODO FOCO OVERLAY */}
-      {focusTask && (
-        <FocusMode
-          task={focusTask}
-          onClose={() => setFocusTask(null)}
-          onComplete={() => {
-            handleStatusChange(focusTask.id, TaskStatus.DONE);
-            setFocusTask(null);
-          }}
-        />
-      )}
     </div>
   );
 };
