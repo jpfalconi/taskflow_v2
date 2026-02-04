@@ -405,8 +405,8 @@ const App: React.FC = () => {
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <span className={`text-[9px] font-bold uppercase tracking-widest ${isLate(t.dueDate) ? 'text-zentask-red' : 'text-slate-400'} hidden sm:inline`}>
-                            {t.dueDate ? new Date(t.dueDate).toLocaleDateString('pt-BR') : 'SEM PRAZO'}
+                          <span className={`text-[9px] font-bold uppercase tracking-widest ${isLate(t.dueDate) ? 'text-zentask-red' : 'text-slate-400'}`}>
+                            {t.dueDate ? new Date(t.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : 'SEM PRAZO'}
                           </span>
 
                           <div
