@@ -27,7 +27,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, view, isSelected, onSelect, o
       title={isKanban ? "Arraste para mover ou clique para editar" : "Tarefa da lista"}
       onDragStart={(e) => onDragStart(e, task.id)}
       onClick={() => onEdit(task)}
-      className={`bg-white rounded-[24px] shadow-sm border-2 transition-all group relative flex flex-col cursor-pointer ${late ? 'border-zentask-red/20 bg-zentask-red/[0.01]' : 'border-slate-50 hover:border-black/5'} p-4 hover:shadow-xl active:scale-[0.98]`}
+      onContextMenu={(e) => { e.preventDefault(); onDelete(task.id); }}
+      className={`bg-white rounded-[24px] shadow-sm border-2 transition-all group relative flex flex-col cursor-pointer ${late ? 'border-zentask-red/20 bg-zentask-red/[0.01]' : 'border-slate-50 hover:border-black/5'} p-4 hover:shadow-xl active:scale-[0.98] cursor-[context-menu]`}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex flex-wrap gap-1.5 items-center">
@@ -36,6 +37,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, view, isSelected, onSelect, o
           </span>
           {isRecurring && <span title="Recorrente" className="text-[11px] opacity-70">🔄</span>}
         </div>
+        <button
+          title="Excluir"
+          onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+          className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+        </button>
       </div>
 
       <h3 className={`font-black text-[15px] text-black mb-1 leading-tight tracking-tight ${task.status === TaskStatus.DONE ? 'line-through opacity-60 text-slate-600' : ''}`}>

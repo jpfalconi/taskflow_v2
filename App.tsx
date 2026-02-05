@@ -291,6 +291,17 @@ const App: React.FC = () => {
     );
   }
 
+  const handleDeleteTask = async (id: string) => {
+    if (confirm('Tem certeza que deseja excluir esta tarefa permanentemente?')) {
+      setTasks(prev => prev.filter(t => t.id !== id));
+      if (editingTask?.id === id) {
+        setIsModalOpen(false);
+        setEditingTask(null);
+      }
+      await db.deleteTask(id);
+    }
+  };
+
   const navigateTo = (v: ViewType) => {
     setView(v);
     setIsMenuOpen(false);
@@ -378,7 +389,7 @@ const App: React.FC = () => {
                     onDrop={(e) => handleDrop(e, col.id)}
                     className={`flex-1 rounded-[32px] p-4 ${col.bg} border-2 border-dashed border-black/5 space-y-3 overflow-y-auto scrollbar-hide shadow-inner transition-colors duration-200`}
                   >
-                    {col.tasks.map(t => <TaskCard key={t.id} task={t} view={view} isSelected={selectedIds.has(t.id)} onSelect={toggleSelect} onEdit={openModal} onDelete={async (id) => { if (confirm('Remover tarefa?')) { setTasks(p => p.filter(x => x.id !== id)); await db.deleteTask(id); } }} onStatusChange={handleStatusChange} onDragStart={(e, id) => e.dataTransfer.setData('taskId', id)} />)}
+                    {col.tasks.map(t => <TaskCard key={t.id} task={t} view={view} isSelected={selectedIds.has(t.id)} onSelect={toggleSelect} onEdit={openModal} onDelete={handleDeleteTask} onStatusChange={handleStatusChange} onDragStart={(e, id) => e.dataTransfer.setData('taskId', id)} />)}
                   </div>
                 </div>
               ))}
@@ -390,7 +401,11 @@ const App: React.FC = () => {
                   <h3 className={`text-[12px] font-black uppercase tracking-[0.2em] px-4 ${col.color}`}>{col.label}</h3>
                   <div className="bg-white rounded-[32px] border border-black/5 shadow-xl divide-y divide-black/5 overflow-hidden">
                     {col.tasks.map(t => (
-                      <div key={t.id} className={`py-2 px-4 flex items-center justify-between gap-3 transition-all group hover:bg-slate-50`}>
+                      <div
+                        key={t.id}
+                        className={`py-2 px-4 flex items-center justify-between gap-3 transition-all group hover:bg-slate-50 cursor-[context-menu]`}
+                        onContextMenu={(e) => { e.preventDefault(); handleDeleteTask(t.id); }}
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           <button
                             title="Concluir"
@@ -410,6 +425,14 @@ const App: React.FC = () => {
                           <span className={`text-[9px] font-bold uppercase tracking-widest ${isLate(t.dueDate) ? 'text-zentask-red' : 'text-slate-400'}`}>
                             {t.dueDate ? new Date(t.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : 'SEM PRAZO'}
                           </span>
+
+                          <button
+                            title="Excluir"
+                            onClick={(e) => { e.stopPropagation(); handleDeleteTask(t.id); }}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
 
                           <div
                             title="Selecionar"
@@ -458,7 +481,19 @@ const App: React.FC = () => {
           <form onSubmit={handleCreateOrUpdate} className="bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 shadow-[0_50px_100px_rgba(0,0,0,0.3)] space-y-6 max-h-[95dvh] overflow-y-auto scrollbar-hide">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-2xl font-black uppercase tracking-tighter">Planejar Tarefa</h3>
-              <button title="Fechar" type="button" onClick={() => setIsModalOpen(false)} className="text-slate-200 hover:text-black p-2 transition-colors"><svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
+              <div className="flex items-center gap-2">
+                {editingTask && (
+                  <button
+                    title="Excluir Tarefa"
+                    type="button"
+                    onClick={() => handleDeleteTask(editingTask.id)}
+                    className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  </button>
+                )}
+                <button title="Fechar" type="button" onClick={() => setIsModalOpen(false)} className="text-slate-200 hover:text-black p-2 transition-colors"><svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg></button>
+              </div>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
